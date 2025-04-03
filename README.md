@@ -1,3 +1,15 @@
+# Gantt chart vibe coding
+
+Implement a Gantt chart only with vibe coding.
+
+Using Google AI Studio Gemini 2.5 Pro Experimental 03-25 with following prompt:
+
+```
+implement a Gantt chart in React with Tailwind CSS and TypeScript. Resource list is on the left side. all events are draggable via mouse.
+```
+
+## NextJS Project Template
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
