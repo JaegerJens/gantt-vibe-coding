@@ -1,3 +1,14 @@
+# Gantt chart vibe coding
+
+Implement a Gantt chart only with vibe coding.
+
+Using Google AI Studio Gemini 2.5 Pro Experimental 03-25 with following prompt:
+
+```
+implement a Gantt chart in Next.JS with Tailwind CSS and TypeScript. Resource list is on the left side. Gantt chart shows tasks of today. Task can be moved to new start time via drag and drop.
+```
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
