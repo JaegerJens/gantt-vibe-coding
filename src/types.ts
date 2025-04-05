@@ -4,10 +4,11 @@ export type Id = string;
 
 export interface Event {
   id: Id;
-  name: string;
+  title: string;
   startTime: TimeString;
   endTime: TimeString;
   color?: string;
+  personId: Id;
 }
 
 export interface Person {
@@ -15,6 +16,7 @@ export interface Person {
   name: string;
 }
 
-export interface PersonWithEvents extends Person {
+export interface ScheduleData {
+  resources: Person[];
   events: Event[];
 }

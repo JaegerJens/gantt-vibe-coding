@@ -45,9 +45,9 @@ const EventBar: React.FC<EventBarProps> = ({
       {...listeners}
       {...attributes}
       className={`event-bar absolute top-1 bottom-1 rounded flex items-center px-2 text-white text-xs font-medium overflow-hidden whitespace-nowrap ${bgColor}`}
-      title={`${personName}: ${event.name} (${event.startTime} - ${event.endTime})`}
+      title={`${personName}: ${event.title} (${event.startTime} - ${event.endTime})`}
     >
-      <span className="truncate">{event.name}</span>
+      <span className="truncate">{event.title}</span>
     </div>
   );
 };
