@@ -1,7 +1,7 @@
 'use client';
 
 import React from "react";
-import { Event } from "@/types";
+import { Event, Person } from "@/types";
 import EventBar from "./EventBar";
 import { useDroppable } from "@dnd-kit/core";
 import { hours, totalMinutesInDay } from "@/utils/datetime";
@@ -10,17 +10,17 @@ interface TimelineRowProps {
   events: Event[];
   timelineWidth: number;
   hourWidth: number;
-  personName: string;
+  person: Person;
 }
 
 const TimelineRow: React.FC<TimelineRowProps> = ({
   events,
   timelineWidth,
   hourWidth,
-  personName,
+  person,
 }) => {
   const { setNodeRef } = useDroppable({
-    id: `droppable ${personName}`,
+    id: person.id,
   });
 
   return (
@@ -46,7 +46,7 @@ const TimelineRow: React.FC<TimelineRowProps> = ({
             key={event.id}
             event={event}
             timelineWidth={timelineWidth}
-            personName={personName}
+            personName={person.name}
             totalMinutesInDay={totalMinutesInDay}
           />
         ))}

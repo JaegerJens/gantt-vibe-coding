@@ -5,13 +5,16 @@ import TimelineRow from "./TimeLineRow";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { hours, moveTime } from "@/utils/datetime";
 import { moveEventTime } from "@/data/EventsData";
-import { PersonWithEvents } from "@/types";
+import { Id, PersonWithEvents } from "@/types";
 import { findEvent } from "@/utils/scheduler";
 
 // Define name column width consistently (Tailwind: w-36=9rem, w-48=12rem)
 // Using rem or px ensures consistency if you adjust root font-size later
 const nameColWidthClass = "w-36 lg:w-48";
 const nameColMinWidth = "9rem"; // Or 144px for w-36
+
+const extractTargetPersonId = (dndEvent: DragEndEvent): Id | undefined => 
+  (Array.isArray(dndEvent.collisions) && dndEvent.collisions.length > 0) ? dndEvent.collisions[0].id as string : undefined;
 
 interface GanttChartProps {
   hourWidth?: number; // Width of each hour column in pixels
@@ -26,10 +29,13 @@ const GanttChart: React.FC<GanttChartProps> = ({ dataPromise, hourWidth = 60 }) 
     if (typeof dndEvent.active.id != 'string') {
       throw new Error(`Event id not supported ${JSON.stringify(dndEvent.active)}`)
     }
+    console.log(dndEvent);
     const event = findEvent(data, dndEvent.active.id);
     if (event == null) {
       throw new Error(`Event not found ${dndEvent.active.id}`);
     }
+    const targetPerson =extractTargetPersonId(dndEvent);
+    console.log(`targetPerson: ${targetPerson}`);
     const deltaTime: number = dndEvent.delta.x / hourWidth;
     event.startTime = moveTime(event.startTime, deltaTime);
     event.endTime = moveTime(event.endTime, deltaTime)
@@ -98,7 +104,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ dataPromise, hourWidth = 60 }) 
                     events={person.events}
                     timelineWidth={timelineWidth}
                     hourWidth={hourWidth}
-                    personName={person.name}
+                    person={person}
                   />
                 </div> // End Person Row
               );
