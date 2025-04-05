@@ -1,11 +1,10 @@
-"use client";
+'use client';
 
-// src/components/TimelineRow.tsx
 import React from "react";
 import { Event } from "@/types";
 import EventBar from "./EventBar";
 import { useDroppable } from "@dnd-kit/core";
-import { totalMinutesInDay } from "@/utils/datetime";
+import { hours, totalMinutesInDay } from "@/utils/datetime";
 
 interface TimelineRowProps {
   events: Event[];
@@ -23,7 +22,6 @@ const TimelineRow: React.FC<TimelineRowProps> = ({
   const { setNodeRef } = useDroppable({
     id: `droppable ${personName}`,
   });
-  const hours = Array.from({ length: 24 }, (_, i) => i); // 0 to 23
 
   return (
     <div

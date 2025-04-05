@@ -1,11 +1,12 @@
-"use client";
+'use client';
 
-// src/components/GanttChart.tsx
-import { Person } from "@/types";
 import React from "react";
 import TimelineRow from "./TimeLineRow";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { hours, moveTime } from "@/utils/datetime";
+import { moveEventTime } from "@/data/EventsData";
+import { PersonWithEvents } from "@/types";
+import { findEvent } from "@/utils/scheduler";
 
 // Define name column width consistently (Tailwind: w-36=9rem, w-48=12rem)
 // Using rem or px ensures consistency if you adjust root font-size later
@@ -13,23 +14,27 @@ const nameColWidthClass = "w-36 lg:w-48";
 const nameColMinWidth = "9rem"; // Or 144px for w-36
 
 interface GanttChartProps {
-  people: Person[];
   hourWidth?: number; // Width of each hour column in pixels
+  dataPromise: Promise<PersonWithEvents[]>;
 }
 
-const GanttChart: React.FC<GanttChartProps> = ({ people, hourWidth = 60 }) => {
+const GanttChart: React.FC<GanttChartProps> = ({ dataPromise, hourWidth = 60 }) => {
+  const data = React.use(dataPromise);
   const timelineWidth = hours.length * hourWidth; // Total width of the timeline *area*
-
+  
   const onDragEnd = React.useCallback((dndEvent: DragEndEvent): void => {
-    const movedEvent = people.flatMap(p => p.events).find(e => e.id === dndEvent.active.id);
-    if (movedEvent == null) {
-      console.log(`Event not found`, dndEvent);
-      return;
+    if (typeof dndEvent.active.id != 'string') {
+      throw new Error(`Event id not supported ${JSON.stringify(dndEvent.active)}`)
     }
-    const deltaHour = dndEvent.delta.x / hourWidth;
-    movedEvent.startTime = moveTime(movedEvent.startTime, deltaHour);
-    movedEvent.endTime = moveTime(movedEvent.endTime, deltaHour);
-  }, [people, hourWidth]);
+    const event = findEvent(data, dndEvent.active.id);
+    if (event == null) {
+      throw new Error(`Event not found ${dndEvent.active.id}`);
+    }
+    const deltaTime: number = dndEvent.delta.x / hourWidth;
+    event.startTime = moveTime(event.startTime, deltaTime);
+    event.endTime = moveTime(event.endTime, deltaTime)
+    moveEventTime(dndEvent.active.id, deltaTime);
+  }, [data, hourWidth]);
 
   return (
     <DndContext onDragEnd={onDragEnd} >
@@ -68,7 +73,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ people, hourWidth = 60 }) => {
           <div className="chart-body relative">
             {" "}
             {/* Relative positioning context for event bars */}
-            {people.map((person, index) => {
+            {data.map((person, index) => {
               const rowBgColor = index % 2 === 0 ? "bg-white" : "bg-gray-50/50";
               const stickyBgColor = index % 2 === 0 ? "white" : "#f9fafb"; // Match background for sticky column
 

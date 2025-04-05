@@ -1,8 +1,12 @@
-import { Person } from "@/types";
+'use server';
 
-export const sampleGanttData: Person[] = [
+import type { Id, Event, PersonWithEvents } from "@/types";
+import { moveTime } from "@/utils/datetime";
+import { findEvent } from "@/utils/scheduler";
+
+const sampleGanttData: PersonWithEvents[] = [
   {
-    id: 1,
+    id: 'p1',
     name: "Alice Smith",
     events: [
       {
@@ -35,7 +39,7 @@ export const sampleGanttData: Person[] = [
     ],
   },
   {
-    id: 2,
+    id: 'p2',
     name: "Bob Johnson",
     events: [
       {
@@ -69,7 +73,7 @@ export const sampleGanttData: Person[] = [
     ],
   },
   {
-    id: 3,
+    id: 'p3',
     name: "Charlie Davis",
     events: [
       {
@@ -89,8 +93,18 @@ export const sampleGanttData: Person[] = [
     ],
   },
   {
-    id: 4,
+    id: 'p4',
     name: "Diana Evans (No Events)",
     events: [],
   },
 ];
+
+export const fetchData = async (): Promise<PersonWithEvents[]> => sampleGanttData;
+
+export const moveEventTime = async (eventId: Id, deltaTime: number): Promise<Event | undefined> => {
+  const event = findEvent(sampleGanttData, eventId);
+  if (!event) return;
+  event.startTime = moveTime(event.startTime, deltaTime);
+  event.endTime = moveTime(event.endTime, deltaTime);
+  return event;
+};

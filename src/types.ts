@@ -1,7 +1,9 @@
 export type TimeString = `${number}:${number}`;
 
+export type Id = string;
+
 export interface Event {
-  id: string | number;
+  id: Id;
   name: string;
   startTime: TimeString;
   endTime: TimeString;
@@ -9,7 +11,10 @@ export interface Event {
 }
 
 export interface Person {
-  id: string | number;
+  id: Id;
   name: string;
+}
+
+export interface PersonWithEvents extends Person {
   events: Event[];
 }
