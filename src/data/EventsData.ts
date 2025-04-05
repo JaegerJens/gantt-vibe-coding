@@ -1,4 +1,4 @@
-'use server';
+"use server";
 
 import type { Id, Event, PersonWithEvents } from "@/types";
 import { moveTime } from "@/utils/datetime";
@@ -6,7 +6,7 @@ import { findEvent } from "@/utils/scheduler";
 
 const sampleGanttData: PersonWithEvents[] = [
   {
-    id: 'p1',
+    id: "p1",
     name: "Alice Smith",
     events: [
       {
@@ -39,7 +39,7 @@ const sampleGanttData: PersonWithEvents[] = [
     ],
   },
   {
-    id: 'p2',
+    id: "p2",
     name: "Bob Johnson",
     events: [
       {
@@ -73,7 +73,7 @@ const sampleGanttData: PersonWithEvents[] = [
     ],
   },
   {
-    id: 'p3',
+    id: "p3",
     name: "Charlie Davis",
     events: [
       {
@@ -93,15 +93,19 @@ const sampleGanttData: PersonWithEvents[] = [
     ],
   },
   {
-    id: 'p4',
+    id: "p4",
     name: "Diana Evans (No Events)",
     events: [],
   },
 ];
 
-export const fetchData = async (): Promise<PersonWithEvents[]> => sampleGanttData;
+export const fetchData = async (): Promise<PersonWithEvents[]> =>
+  sampleGanttData;
 
-export const moveEventTime = async (eventId: Id, deltaTime: number): Promise<Event | undefined> => {
+export const moveEventTime = async (
+  eventId: Id,
+  deltaTime: number,
+): Promise<Event | undefined> => {
   const event = findEvent(sampleGanttData, eventId);
   if (!event) return;
   event.startTime = moveTime(event.startTime, deltaTime);

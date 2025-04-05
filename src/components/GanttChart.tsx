@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React from "react";
 import TimelineRow from "./TimeLineRow";
@@ -13,37 +13,47 @@ import { findEvent } from "@/utils/scheduler";
 const nameColWidthClass = "w-36 lg:w-48";
 const nameColMinWidth = "9rem"; // Or 144px for w-36
 
-const extractTargetPersonId = (dndEvent: DragEndEvent): Id | undefined => 
-  (Array.isArray(dndEvent.collisions) && dndEvent.collisions.length > 0) ? dndEvent.collisions[0].id as string : undefined;
+const extractTargetPersonId = (dndEvent: DragEndEvent): Id | undefined =>
+  Array.isArray(dndEvent.collisions) && dndEvent.collisions.length > 0
+    ? (dndEvent.collisions[0].id as string)
+    : undefined;
 
 interface GanttChartProps {
   hourWidth?: number; // Width of each hour column in pixels
   dataPromise: Promise<PersonWithEvents[]>;
 }
 
-const GanttChart: React.FC<GanttChartProps> = ({ dataPromise, hourWidth = 60 }) => {
+const GanttChart: React.FC<GanttChartProps> = ({
+  dataPromise,
+  hourWidth = 60,
+}) => {
   const data = React.use(dataPromise);
   const timelineWidth = hours.length * hourWidth; // Total width of the timeline *area*
-  
-  const onDragEnd = React.useCallback((dndEvent: DragEndEvent): void => {
-    if (typeof dndEvent.active.id != 'string') {
-      throw new Error(`Event id not supported ${JSON.stringify(dndEvent.active)}`)
-    }
-    console.log(dndEvent);
-    const event = findEvent(data, dndEvent.active.id);
-    if (event == null) {
-      throw new Error(`Event not found ${dndEvent.active.id}`);
-    }
-    const targetPerson =extractTargetPersonId(dndEvent);
-    console.log(`targetPerson: ${targetPerson}`);
-    const deltaTime: number = dndEvent.delta.x / hourWidth;
-    event.startTime = moveTime(event.startTime, deltaTime);
-    event.endTime = moveTime(event.endTime, deltaTime)
-    moveEventTime(dndEvent.active.id, deltaTime);
-  }, [data, hourWidth]);
+
+  const onDragEnd = React.useCallback(
+    (dndEvent: DragEndEvent): void => {
+      if (typeof dndEvent.active.id != "string") {
+        throw new Error(
+          `Event id not supported ${JSON.stringify(dndEvent.active)}`,
+        );
+      }
+      console.log(dndEvent);
+      const event = findEvent(data, dndEvent.active.id);
+      if (event == null) {
+        throw new Error(`Event not found ${dndEvent.active.id}`);
+      }
+      const targetPerson = extractTargetPersonId(dndEvent);
+      console.log(`targetPerson: ${targetPerson}`);
+      const deltaTime: number = dndEvent.delta.x / hourWidth;
+      event.startTime = moveTime(event.startTime, deltaTime);
+      event.endTime = moveTime(event.endTime, deltaTime);
+      moveEventTime(dndEvent.active.id, deltaTime);
+    },
+    [data, hourWidth],
+  );
 
   return (
-    <DndContext onDragEnd={onDragEnd} >
+    <DndContext onDragEnd={onDragEnd}>
       {/* NEW: Outer wrapper enables horizontal scrolling for the *entire* grid below */}
       <div className="gantt-chart-container overflow-x-auto bg-white shadow-md rounded-lg border border-gray-200">
         {/* NEW: Inner div that will contain the full grid width */}
