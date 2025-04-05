@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
 // src/components/GanttChart.tsx
-import { Person } from '@/data/Events';
-import React from 'react';
-import TimelineRow from './TimeLineRow';
-import { DndContext } from '@dnd-kit/core';
+import { Person } from "@/data/Events";
+import React from "react";
+import TimelineRow from "./TimeLineRow";
+import { DndContext } from "@dnd-kit/core";
 
 const hours = Array.from({ length: 24 }, (_, i) => i); // 0 to 23
 const totalMinutesInDay = 24 * 60;
@@ -12,9 +12,8 @@ const totalMinutesInDay = 24 * 60;
 // Define name column width consistently (Tailwind: w-36=9rem, w-48=12rem)
 // Using rem or px ensures consistency if you adjust root font-size later
 const nameColWidthClass = "w-36 lg:w-48";
-const nameColMinWidth = '9rem'; // Or 144px for w-36
-const nameColLgMinWidth = '12rem'; // Or 192px for w-48
-
+const nameColMinWidth = "9rem"; // Or 144px for w-36
+const nameColLgMinWidth = "12rem"; // Or 192px for w-48
 
 interface GanttChartProps {
   people: Person[];
@@ -42,31 +41,41 @@ const GanttChart: React.FC<GanttChartProps> = ({ people, hourWidth = 60 }) => {
               Person
             </div>
             {/* Header: Timeline Hours (Part of the horizontal scroll) */}
-            <div className="timeline-header flex-grow flex" style={{ width: `${timelineWidth}px` }}>
+            <div
+              className="timeline-header flex-grow flex"
+              style={{ width: `${timelineWidth}px` }}
+            >
               {hours.map((hour) => (
                 <div
                   key={hour}
                   className="hour-marker flex-shrink-0 border-r border-gray-200 text-center text-xs font-medium text-gray-500 py-2"
                   style={{ width: `${hourWidth}px` }}
                 >
-                  {`${hour.toString().padStart(2, '0')}:00`}
+                  {`${hour.toString().padStart(2, "0")}:00`}
                 </div>
               ))}
             </div>
           </div>
-
           {/* Body: Rows for each person */}
-          <div className="chart-body relative"> {/* Relative positioning context for event bars */}
+          <div className="chart-body relative">
+            {" "}
+            {/* Relative positioning context for event bars */}
             {people.map((person, index) => {
-              const rowBgColor = index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50';
-              const stickyBgColor = index % 2 === 0 ? 'white' : '#f9fafb'; // Match background for sticky column
+              const rowBgColor = index % 2 === 0 ? "bg-white" : "bg-gray-50/50";
+              const stickyBgColor = index % 2 === 0 ? "white" : "#f9fafb"; // Match background for sticky column
 
               return (
-                <div key={person.id} className={`person-row flex border-b border-gray-200 ${rowBgColor}`}>
+                <div
+                  key={person.id}
+                  className={`person-row flex border-b border-gray-200 ${rowBgColor}`}
+                >
                   {/* Person Name Cell (Sticky Left) */}
                   <div
                     className={`name-cell flex-shrink-0 ${nameColWidthClass} border-r border-gray-200 px-4 py-3 text-sm font-medium text-gray-800 flex items-center justify-start sticky left-0 z-10`} // z-10 is below header
-                    style={{ backgroundColor: stickyBgColor, minWidth: nameColMinWidth }}
+                    style={{
+                      backgroundColor: stickyBgColor,
+                      minWidth: nameColMinWidth,
+                    }}
                   >
                     {person.name}
                   </div>
@@ -82,9 +91,12 @@ const GanttChart: React.FC<GanttChartProps> = ({ people, hourWidth = 60 }) => {
                 </div> // End Person Row
               );
             })}
-          </div> {/* End Chart Body */}
-        </div> {/* End Inner Grid Container */}
-      </div> { /* End Outer Scroll Container */}
+          </div>{" "}
+          {/* End Chart Body */}
+        </div>{" "}
+        {/* End Inner Grid Container */}
+      </div>{" "}
+      {/* End Outer Scroll Container */}
     </DndContext>
   );
 };

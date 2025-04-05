@@ -1,8 +1,8 @@
 // src/components/TimelineRow.tsx
-import React from 'react';
-import { Event } from '@/data/Events';
-import EventBar from './EventBar';
-import { useDroppable } from '@dnd-kit/core';
+import React from "react";
+import { Event } from "@/data/Events";
+import EventBar from "./EventBar";
+import { useDroppable } from "@dnd-kit/core";
 
 interface TimelineRowProps {
   events: Event[];
@@ -19,13 +19,16 @@ const TimelineRow: React.FC<TimelineRowProps> = ({
   totalMinutesInDay,
   personName,
 }) => {
-  const {setNodeRef} = useDroppable({
-    id: 'droppable',
+  const { setNodeRef } = useDroppable({
+    id: "droppable",
   });
   const hours = Array.from({ length: 24 }, (_, i) => i); // 0 to 23
 
   return (
-    <div className="timeline-row flex-grow relative h-12" style={{ width: `${timelineWidth}px` }}>
+    <div
+      className="timeline-row flex-grow relative h-12"
+      style={{ width: `${timelineWidth}px` }}
+    >
       {/* Background Grid Lines */}
       <div className="grid-lines absolute inset-0 flex">
         {hours.map((hour) => (
@@ -39,7 +42,15 @@ const TimelineRow: React.FC<TimelineRowProps> = ({
 
       {/* Event Bars */}
       <div ref={setNodeRef} className="event-bars absolute inset-0">
-        {events.map((event) => <EventBar key={event.id} event={event} timelineWidth={timelineWidth} personName={personName} totalMinutesInDay={totalMinutesInDay} />)}
+        {events.map((event) => (
+          <EventBar
+            key={event.id}
+            event={event}
+            timelineWidth={timelineWidth}
+            personName={personName}
+            totalMinutesInDay={totalMinutesInDay}
+          />
+        ))}
       </div>
     </div>
   );
