@@ -1,20 +1,6 @@
 // src/components/GanttChart.tsx
+import { Person } from '@/data/Events';
 import React from 'react';
-
-// --- Types (Remain the same) ---
-interface Event {
-  id: string | number;
-  name: string;
-  startTime: string; // Format: "HH:MM" (24-hour)
-  endTime: string;   // Format: "HH:MM" (24-hour)
-  color?: string;      // Optional custom color
-}
-
-interface Person {
-  id: string | number;
-  name: string;
-  events: Event[];
-}
 
 interface GanttChartProps {
   people: Person[];
@@ -22,10 +8,11 @@ interface GanttChartProps {
 }
 
 // --- Helper Function (Remains the same) ---
-const timeToMinutes = (time: string): number => {
-  const [hours, minutes] = time.split(':').map(Number);
-  return hours * 60 + minutes;
-};
+const timeToMinutes = (time: Date): number => {
+    const hours = time.getHours();
+    const minutes = time.getMinutes();
+    return hours * 60 + minutes;
+  };  
 
 const GanttChart: React.FC<GanttChartProps> = ({ people, hourWidth = 60 }) => {
   const hours = Array.from({ length: 24 }, (_, i) => i); // 0 to 23
