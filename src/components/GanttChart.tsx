@@ -1,10 +1,11 @@
 "use client";
 
 // src/components/GanttChart.tsx
-import { Person } from "@/data/Events";
+import { Person, TimeString } from "@/data/Events";
 import React from "react";
 import TimelineRow from "./TimeLineRow";
-import { DndContext } from "@dnd-kit/core";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { moveTime } from "@/utils/datetime";
 
 const hours = Array.from({ length: 24 }, (_, i) => i); // 0 to 23
 const totalMinutesInDay = 24 * 60;
@@ -23,8 +24,19 @@ interface GanttChartProps {
 const GanttChart: React.FC<GanttChartProps> = ({ people, hourWidth = 60 }) => {
   const timelineWidth = hours.length * hourWidth; // Total width of the timeline *area*
 
+  const onDragEnd = React.useCallback((dndEvent: DragEndEvent): void => {
+    const movedEvent = people.flatMap(p => p.events).find(e => e.id === dndEvent.active.id);
+    if (movedEvent == null) {
+      console.log(`Event not found`, dndEvent);
+      return;
+    }
+    const deltaHour = dndEvent.delta.x / hourWidth;
+    movedEvent.startTime = moveTime(movedEvent.startTime, deltaHour);
+    movedEvent.endTime = moveTime(movedEvent.endTime, deltaHour);
+  }, [people]);
+
   return (
-    <DndContext>
+    <DndContext onDragEnd={onDragEnd} >
       {/* NEW: Outer wrapper enables horizontal scrolling for the *entire* grid below */}
       <div className="gantt-chart-container overflow-x-auto bg-white shadow-md rounded-lg border border-gray-200">
         {/* NEW: Inner div that will contain the full grid width */}
