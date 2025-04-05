@@ -1,6 +1,21 @@
 // src/app/page.tsx (or wherever you use the component)
 
-export const sampleGanttData = [
+interface Event {
+    id: string;
+    name: string;
+    startTime: string;
+    endTime: string;
+    color?: string; // Optional color property
+  }
+  
+  interface Person {
+    id: number;
+    name: string;
+    events: Event[];
+  }
+  
+
+export const sampleGanttData: Person[] = [
     {
       id: 1,
       name: 'Alice Smith',
