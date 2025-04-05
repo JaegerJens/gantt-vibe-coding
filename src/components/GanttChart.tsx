@@ -1,29 +1,25 @@
 // src/components/GanttChart.tsx
 import { Person } from '@/data/Events';
 import React from 'react';
+import TimelineRow from './TimeLineRow';
+
+const hours = Array.from({ length: 24 }, (_, i) => i); // 0 to 23
+const totalMinutesInDay = 24 * 60;
+
+// Define name column width consistently (Tailwind: w-36=9rem, w-48=12rem)
+// Using rem or px ensures consistency if you adjust root font-size later
+const nameColWidthClass = "w-36 lg:w-48";
+const nameColMinWidth = '9rem'; // Or 144px for w-36
+const nameColLgMinWidth = '12rem'; // Or 192px for w-48
+
 
 interface GanttChartProps {
   people: Person[];
   hourWidth?: number; // Width of each hour column in pixels
 }
 
-// --- Helper Function (Remains the same) ---
-const timeToMinutes = (time: Date): number => {
-    const hours = time.getHours();
-    const minutes = time.getMinutes();
-    return hours * 60 + minutes;
-  };  
-
 const GanttChart: React.FC<GanttChartProps> = ({ people, hourWidth = 60 }) => {
-  const hours = Array.from({ length: 24 }, (_, i) => i); // 0 to 23
-  const totalMinutesInDay = 24 * 60;
   const timelineWidth = hours.length * hourWidth; // Total width of the timeline *area*
-
-  // Define name column width consistently (Tailwind: w-36=9rem, w-48=12rem)
-  // Using rem or px ensures consistency if you adjust root font-size later
-  const nameColWidthClass = "w-36 lg:w-48";
-  const nameColMinWidth = '9rem'; // Or 144px for w-36
-  const nameColLgMinWidth = '12rem'; // Or 192px for w-48
 
   return (
     // NEW: Outer wrapper enables horizontal scrolling for the *entire* grid below
@@ -72,51 +68,13 @@ const GanttChart: React.FC<GanttChartProps> = ({ people, hourWidth = 60 }) => {
                 </div>
 
                 {/* Timeline Row (Scrollable horizontally with header) */}
-                <div
-                  className="timeline-row flex-grow relative h-12" // Fixed height for rows
-                  style={{ width: `${timelineWidth}px` }} // Ensure it takes up the calculated timeline width
-                >
-                  {/* Background Grid Lines */}
-                  <div className="grid-lines absolute inset-0 flex">
-                    {hours.map((hour) => (
-                      <div
-                        key={`grid-${hour}`}
-                        className="hour-line flex-shrink-0 border-r border-gray-100 h-full"
-                        style={{ width: `${hourWidth}px` }}
-                      ></div>
-                    ))}
-                  </div>
-
-                  {/* Event Bars */}
-                  <div className="event-bars absolute inset-0"> {/* Container for absolutely positioned events */}
-                    {person.events.map((event) => {
-                      const startMinutes = timeToMinutes(event.startTime);
-                      const endMinutes = timeToMinutes(event.endTime);
-                      const durationMinutes = Math.max(0, endMinutes - startMinutes);
-
-                      const leftPx = (startMinutes / totalMinutesInDay) * timelineWidth;
-                      const widthPx = (durationMinutes / totalMinutesInDay) * timelineWidth;
-
-                      const bgColor = event.color || 'bg-blue-500';
-
-                      return (
-                        <div
-                          key={event.id}
-                          className={`event-bar absolute top-1 bottom-1 rounded flex items-center px-2 text-white text-xs font-medium overflow-hidden whitespace-nowrap ${bgColor}`}
-                          style={{
-                            left: `${leftPx}px`,
-                            width: `${widthPx}px`,
-                            minWidth: '1px', // Allow very small bars
-                            maxWidth: `calc(100% - ${leftPx}px)` // Prevent overflow visually
-                          }}
-                          title={`${person.name}: ${event.name} (${event.startTime} - ${event.endTime})`}
-                        >
-                          <span className="truncate">{event.name}</span>
-                        </div>
-                      );
-                    })}
-                  </div> {/* End Event Bars Container */}
-                </div> {/* End Timeline Row */}
+                <TimelineRow
+                  events={person.events}
+                  timelineWidth={timelineWidth}
+                  hourWidth={hourWidth}
+                  totalMinutesInDay={totalMinutesInDay}
+                  personName={person.name}
+                />
               </div> // End Person Row
             );
           })}
