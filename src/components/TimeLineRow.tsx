@@ -2,6 +2,7 @@
 import React from 'react';
 import { Event } from '@/data/Events';
 import EventBar from './EventBar';
+import { useDroppable } from '@dnd-kit/core';
 
 interface TimelineRowProps {
   events: Event[];
@@ -18,6 +19,9 @@ const TimelineRow: React.FC<TimelineRowProps> = ({
   totalMinutesInDay,
   personName,
 }) => {
+  const {setNodeRef} = useDroppable({
+    id: 'droppable',
+  });
   const hours = Array.from({ length: 24 }, (_, i) => i); // 0 to 23
 
   return (
@@ -34,7 +38,7 @@ const TimelineRow: React.FC<TimelineRowProps> = ({
       </div>
 
       {/* Event Bars */}
-      <div className="event-bars absolute inset-0">
+      <div ref={setNodeRef} className="event-bars absolute inset-0">
         {events.map((event) => <EventBar key={event.id} event={event} timelineWidth={timelineWidth} personName={personName} totalMinutesInDay={totalMinutesInDay} />)}
       </div>
     </div>
