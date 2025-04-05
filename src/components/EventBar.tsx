@@ -1,11 +1,8 @@
-import { Event, TimeString } from "@/data/Events";
-import { useDraggable } from "@dnd-kit/core";
+"use client";
 
-// Helper Function (Remains the same)
-const timeToMinutes = (time: TimeString): number => {
-  const [hours, minutes] = time.split(":").map(Number);
-  return hours * 60 + minutes;
-};
+import { Event } from "@/types";
+import { timeToMinutes } from "@/utils/datetime";
+import { useDraggable } from "@dnd-kit/core";
 
 export interface EventBarProps {
   event: Event;

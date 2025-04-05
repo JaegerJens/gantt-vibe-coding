@@ -1,20 +1,16 @@
 "use client";
 
 // src/components/GanttChart.tsx
-import { Person, TimeString } from "@/data/Events";
+import { Person } from "@/types";
 import React from "react";
 import TimelineRow from "./TimeLineRow";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import { moveTime } from "@/utils/datetime";
-
-const hours = Array.from({ length: 24 }, (_, i) => i); // 0 to 23
-const totalMinutesInDay = 24 * 60;
+import { hours, moveTime } from "@/utils/datetime";
 
 // Define name column width consistently (Tailwind: w-36=9rem, w-48=12rem)
 // Using rem or px ensures consistency if you adjust root font-size later
 const nameColWidthClass = "w-36 lg:w-48";
 const nameColMinWidth = "9rem"; // Or 144px for w-36
-const nameColLgMinWidth = "12rem"; // Or 192px for w-48
 
 interface GanttChartProps {
   people: Person[];
@@ -33,7 +29,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ people, hourWidth = 60 }) => {
     const deltaHour = dndEvent.delta.x / hourWidth;
     movedEvent.startTime = moveTime(movedEvent.startTime, deltaHour);
     movedEvent.endTime = moveTime(movedEvent.endTime, deltaHour);
-  }, [people]);
+  }, [people, hourWidth]);
 
   return (
     <DndContext onDragEnd={onDragEnd} >
@@ -97,7 +93,6 @@ const GanttChart: React.FC<GanttChartProps> = ({ people, hourWidth = 60 }) => {
                     events={person.events}
                     timelineWidth={timelineWidth}
                     hourWidth={hourWidth}
-                    totalMinutesInDay={totalMinutesInDay}
                     personName={person.name}
                   />
                 </div> // End Person Row
