@@ -4,9 +4,12 @@ import type { Id, Event, ScheduleData } from "@/types";
 import { moveTime } from "@/utils/datetime";
 import { findEvent } from "@/utils/scheduler";
 import { initialData } from "./InitialData";
+import validate from "./validate";
 
 const resources = initialData.resources;
 let events = initialData.events;
+
+validate(resources, events);
 
 export const fetchData = async (): Promise<ScheduleData> => ({
   resources,
