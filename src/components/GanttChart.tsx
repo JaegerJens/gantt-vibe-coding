@@ -39,8 +39,7 @@ const GanttChart: React.FC<GanttChartProps> = ({
           `Event id not supported ${JSON.stringify(dndEvent.active)}`,
         );
       }
-      const updatedEvents = [...eventData];
-      const event = findEvent(updatedEvents, dndEvent.active.id);
+      const event = findEvent(eventData, dndEvent.active.id);
       if (event == null) {
         throw new Error(`Event not found ${dndEvent.active.id}`);
       }
@@ -52,13 +51,9 @@ const GanttChart: React.FC<GanttChartProps> = ({
       if (targetPersonId != null) {
         event.personId = targetPersonId;
       }
-      updateEvents(updatedEvents);
-      const serverEvents = await moveEvent(
-        dndEvent.active.id,
-        deltaTime,
-        targetPersonId,
-      );
-      updateEvents(serverEvents);
+      updateEvents(eventData);
+      // don't read and use server events
+      await moveEvent(dndEvent.active.id, deltaTime, targetPersonId);
     },
     [eventData, updateEvents, hourWidth],
   );
@@ -103,6 +98,7 @@ const GanttChart: React.FC<GanttChartProps> = ({
                   </div>
 
                   <TimelineRow
+                    key={person.id}
                     events={findEventsForPerson(eventData, person.id)}
                     timelineWidth={timelineWidth}
                     hourWidth={hourWidth}
