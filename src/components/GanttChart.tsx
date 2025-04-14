@@ -103,6 +103,7 @@ const GanttChart: React.FC<GanttChartProps> = ({
                   </div>
 
                   <TimelineRow
+                    key={person.id}
                     events={findEventsForPerson(eventData, person.id)}
                     timelineWidth={timelineWidth}
                     hourWidth={hourWidth}
