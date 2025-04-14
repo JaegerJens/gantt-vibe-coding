@@ -6,8 +6,8 @@ import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { hours, moveTime } from "@/utils/datetime";
 import { moveEvent } from "@/data/EventsData";
 import { Id, ScheduleData } from "@/types";
-import { findEvent, findEventsForPerson } from "@/utils/scheduler";
 import TimelineHeader from "./TimeLineHeader";
+import useEventStore from "@/hooks/useEventStore";
 
 // Define name column width consistently (Tailwind: w-36=9rem, w-48=12rem)
 // Using rem or px ensures consistency if you adjust root font-size later
@@ -29,7 +29,8 @@ const GanttChart: React.FC<GanttChartProps> = ({
   hourWidth = 60,
 }) => {
   const { resources, events: initialEvents } = React.use(dataPromise);
-  const [eventData, updateEvents] = React.useState(initialEvents);
+  const { getEvent, updateEvent, getEventsForPerson } =
+    useEventStore(initialEvents);
   const timelineWidth = hours.length * hourWidth; // Total width of the timeline *area*
 
   const onDragEnd = React.useCallback(
@@ -39,11 +40,8 @@ const GanttChart: React.FC<GanttChartProps> = ({
           `Event id not supported ${JSON.stringify(dndEvent.active)}`,
         );
       }
-      const event = findEvent(eventData, dndEvent.active.id);
-      if (event == null) {
-        throw new Error(`Event not found ${dndEvent.active.id}`);
-      }
-      console.log(`onDragEvent ${event.id}`);
+      const event = getEvent(dndEvent.active.id);
+      console.log("onDragEvent:", event);
       const deltaTime: number = dndEvent.delta.x / hourWidth;
       event.startTime = moveTime(event.startTime, deltaTime);
       event.endTime = moveTime(event.endTime, deltaTime);
@@ -51,11 +49,11 @@ const GanttChart: React.FC<GanttChartProps> = ({
       if (targetPersonId != null) {
         event.personId = targetPersonId;
       }
-      updateEvents(eventData);
+      updateEvent(event);
       // don't read and use server events
       await moveEvent(dndEvent.active.id, deltaTime, targetPersonId);
     },
-    [eventData, updateEvents, hourWidth],
+    [getEvent, updateEvent, hourWidth],
   );
 
   const id = React.useId();
@@ -81,6 +79,7 @@ const GanttChart: React.FC<GanttChartProps> = ({
             {resources.map((person, index) => {
               const rowBgColor = index % 2 === 0 ? "bg-white" : "bg-gray-50/50";
               const stickyBgColor = index % 2 === 0 ? "white" : "#f9fafb"; // Match background for sticky column
+              const personEvents = getEventsForPerson(person.id);
 
               return (
                 <div
@@ -99,7 +98,7 @@ const GanttChart: React.FC<GanttChartProps> = ({
 
                   <TimelineRow
                     key={person.id}
-                    events={findEventsForPerson(eventData, person.id)}
+                    events={personEvents}
                     timelineWidth={timelineWidth}
                     hourWidth={hourWidth}
                     person={person}
