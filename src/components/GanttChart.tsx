@@ -30,7 +30,7 @@ const GanttChart: React.FC<GanttChartProps> = ({
 }) => {
   const { resources, events: initialEvents } = React.use(dataPromise);
   const [eventData, updateEvents] = React.useState(initialEvents);
-  const timelineWidth = hours.length * hourWidth; // Total width of the timeline *area*
+  const timelineWidth = React.useMemo(() => hours.length * hourWidth, [hours, hourWidth]); // Total width of the timeline *area*
 
   const onDragEnd = React.useCallback(
     async (dndEvent: DragEndEvent): Promise<void> => {
