@@ -5,3 +5,11 @@ export const findEvent = (events: Event[], eventId: Id): Event | undefined =>
 
 export const findEventsForPerson = (events: Event[], personId: Id): Event[] =>
   events.filter((e) => e.personId === personId);
+
+export const areEventsEqual = (a: Event, b: Event): boolean =>
+  a.id === b.id &&
+  a.title === b.title &&
+  a.personId === b.personId &&
+  a.startTime === b.startTime &&
+  a.endTime === b.endTime &&
+  a.color === b.color;

@@ -2,7 +2,9 @@
 
 import { Event } from "@/types";
 import { timeToMinutes } from "@/utils/datetime";
+import { areEventsEqual } from "@/utils/scheduler";
 import { useDraggable } from "@dnd-kit/core";
+import React from "react";
 
 export interface EventBarProps {
   event: Event;
@@ -11,12 +13,21 @@ export interface EventBarProps {
   personName: string;
 }
 
-const EventBar: React.FC<EventBarProps> = ({
+const areEventBarPropsEqual = (
+  prev: Readonly<EventBarProps>,
+  next: Readonly<EventBarProps>,
+) =>
+  areEventsEqual(prev.event, next.event) &&
+  prev.timelineWidth === next.timelineWidth &&
+  prev.totalMinutesInDay === next.totalMinutesInDay &&
+  prev.personName === next.personName;
+
+const EventBar = React.memo(function EventBar({
   event,
   timelineWidth,
   totalMinutesInDay,
   personName,
-}) => {
+}) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: event.id,
   });
@@ -50,6 +61,6 @@ const EventBar: React.FC<EventBarProps> = ({
       <span className="truncate">{event.title}</span>
     </div>
   );
-};
+}, areEventBarPropsEqual);
 
 export default EventBar;

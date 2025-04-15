@@ -37,3 +37,17 @@ export function groupIntoMap<T extends object>(
   });
   return map;
 }
+
+type Equality<T> = (a: T, b: T) => boolean;
+
+export function areArraysEqual<T>(
+  a: T[],
+  b: T[],
+  equalEntity: Equality<T>,
+): boolean {
+  if (a.length !== b.length) return false;
+  return a.reduce(
+    (res, curr) => res && b.some((e) => equalEntity(curr, e)),
+    true,
+  );
+}

@@ -5,6 +5,8 @@ import { Event, Person } from "@/types";
 import EventBar from "./EventBar";
 import { useDroppable } from "@dnd-kit/core";
 import { hours, totalMinutesInDay } from "@/utils/datetime";
+import { areArraysEqual } from "@/utils/array";
+import { areEventsEqual } from "@/utils/scheduler";
 
 interface TimelineRowProps {
   events: Event[];
@@ -13,12 +15,21 @@ interface TimelineRowProps {
   person: Person;
 }
 
-const TimelineRow: React.FC<TimelineRowProps> = ({
+const areTimelinePropsEqual = (
+  prev: Readonly<TimelineRowProps>,
+  next: Readonly<TimelineRowProps>,
+): boolean =>
+  prev.person.id === next.person.id &&
+  areArraysEqual(prev.events, next.events, areEventsEqual) &&
+  prev.timelineWidth === next.timelineWidth &&
+  prev.hourWidth === next.hourWidth;
+
+const TimelineRow = React.memo(function TimelineRow({
   events,
   timelineWidth,
   hourWidth,
   person,
-}) => {
+}) {
   const { setNodeRef } = useDroppable({
     id: person.id,
   });
@@ -53,6 +64,6 @@ const TimelineRow: React.FC<TimelineRowProps> = ({
       </div>
     </div>
   );
-};
+}, areTimelinePropsEqual);
 
 export default TimelineRow;
