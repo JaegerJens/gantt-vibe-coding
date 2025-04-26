@@ -3,7 +3,7 @@ import { Event, Person, ScheduleData, TimeString } from "@/types";
 const parameter = {
   startHour: 5,
   endHour: 23,
-  resourceCount: 100,
+  resourceCount: 10,
   averageEventCountPerResource: 5,
 };
 
