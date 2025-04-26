@@ -13,15 +13,15 @@ const getRandomInt = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const getRandomTime = (): TimeString => {
+const getRandomTime = (): [number, number] => {
   const hour = getRandomInt(parameter.startHour, parameter.endHour);
   const minute = getRandomInt(0, 3) * 15; // 0, 15, 30, 45
-  return `${hour}:${minute}`;
+  return [hour, minute];
 };
 
 // Generates a plausible end time based on a start time
-const generateEndTime = (startTime: string): TimeString => {
-  const [startHour, startMinute] = startTime.split(":").map(Number);
+const generateRandomEventTime = (): [TimeString, TimeString] => {
+  let [startHour, startMinute] = getRandomTime();
   const durationMinutes = getRandomInt(2, 8) * 15; // 30 mins to 2 hours
 
   let endMinute = startMinute + durationMinutes;
@@ -32,11 +32,8 @@ const generateEndTime = (startTime: string): TimeString => {
   if (endHour >= parameter.endHour) {
     endHour = parameter.endHour;
     endMinute = 0;
-    // If start time was already 18:00, make duration minimal
-    if (startHour >= parameter.endHour) {
-      endHour = parameter.endHour;
-      endMinute = 15; // Or some small fixed duration
-    }
+    startHour = 23 - Math.ceil(durationMinutes / 60);
+    startMinute = durationMinutes % 60;
   }
 
   // Avoid start and end times being the same if duration was minimal and clipped
@@ -53,7 +50,7 @@ const generateEndTime = (startTime: string): TimeString => {
     }
   }
 
-  return `${endHour}:${endMinute}`;
+  return [`${startHour}:${startMinute}`, `${endHour}:${endMinute}`];
 };
 
 // Predefined lists for variety
@@ -168,8 +165,7 @@ const generateEvents = (persons: Person[]): Event[] => {
       parameter.averageEventCountPerResource + 2,
     );
     for (let i = 0; i < numberOfEvents; i++) {
-      const startTime = getRandomTime();
-      const endTime = generateEndTime(startTime);
+      const [startTime, endTime] = generateRandomEventTime();
       events.push({
         id: `e${eventCounter++}`,
         title: possibleTitles[getRandomInt(0, possibleTitles.length - 1)],
